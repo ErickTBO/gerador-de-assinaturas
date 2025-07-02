@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Assinatura - TBO</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/NgUHneA.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #0f0f0f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .logo-topo {
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        .logo-topo img {
+            height: 50px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #e85102;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: 600px;
+        }
+        
+        .form-section {
+            padding: 40px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+        }
+        
+        .preview-section {
+            padding: 40px;
+            background: white;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #e85102;
+        }
+        
+        .copy-btn {
+            width: 100%;
+            padding: 15px;
+            background: #161616;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #000000;
+        }
+        
+        .preview-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #e85102;
+            padding-bottom: 10px;
+        }
+        
+        .signature-preview {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        
+        .code-output {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        /* Estilos da assinatura */
+        .signature-content {
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .logo-section {
+            display: table-cell;
+            vertical-align: middle;
+            width: 140px;
+            padding-right: 15px;
+        }
+        
+        .logo-section img {
+            max-width: 120px;
+            height: auto;
+        }
+        
+        .divider {
+            display: table-cell;
+            vertical-align: middle;
+            width: 3px;
+            background-image: url('https://i.imgur.com/Bhq8k8H.png');
+            background-repeat: repeat-y;
+            background-position: center;
+            padding: 0 10px;
+        }
+        
+        .info-section {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin: 0 0 5px 0;
+            line-height: 1.2;
+        }
+        
+        .position {
+            font-size: 14px;
+            color: #e85102;
+            margin: 0 0 15px 0;
+            font-weight: normal;
+        }
+        
+        .contact-info {
+            margin-bottom: 15px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .contact-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+        
+        .contact-text {
+            font-size: 12px;
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .social-icons {
+            position: absolute;
+            bottom: 0;
+            right: 15px;
+            display: flex;
+            gap: 6px;
+        }
+        
+        .social-icon {
+            width: 12px;
+            height: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-section {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="logo-topo">
+        <img src="https://i.imgur.com/G3hRlXo.png" alt="Logo TBO">
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Gerador de Assinatura TBO</h1>
+            <p>Crie sua assinatura personalizada para e-mail</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="nome">Nome e Sobrenome:</label>
+                    <input type="text" id="nome" placeholder="Nome e Sobrenome" value="">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cargo">Cargo:</label>
+                    <input type="text" id="cargo" placeholder="Seu cargo" value="">
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefone">Telefone:</label>
+                    <input type="text" id="telefone" placeholder="+55 41 9 9999-9999" value="">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" placeholder="seuemail@agenciatbo.com.br" value="">
+                </div>
+                
+                <button class="copy-btn" onclick="copiarAssinatura()">Copiar assinatura de email</button>
+            </div>
+            
+            <div class="preview-section">
+                <h3 class="preview-title">Pré-visualização</h3>
+                
+                <div class="signature-preview" id="preview">
+                    <div class="signature-content">
+                        <div class="logo-section">
+                            <img src="https://i.imgur.com/5Ny8i5w.gif" alt="TBO - think, build, own">
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="info-section">
+                            <div class="name" id="preview-nome">Nome e Sobrenome</div>
+                            <div class="position" id="preview-cargo">Cargo</div>
+                            
+                            <div class="contact-info">
+                                <div class="contact-item">
+                                    <img src="https://i.imgur.com/w3dO2mR.png" alt="Telefone" class="contact-icon">
+                                    <span class="contact-text" id="preview-telefone">+55 41 9 9999-9999</span>
+                                </div>
+                                <div class="contact-item">
+                                    <img src="https://i.imgur.com/Xe018u5.png" alt="E-mail" class="contact-icon">
+                                    <span class="contact-text" id="preview-email">seuemail@agenciatbo.com.br</span>
+                                </div>
+                            </div>
+                            
+                            <div class="social-icons">
+                                <a href="https://www.instagram.com/agenciatbo/?hl=pt" target="_blank">
+                                    <img src="https://i.imgur.com/eMiJ4v8.png" alt="Instagram" class="social-icon">
+                                </a>
+                                <a href="https://br.linkedin.com/company/agenciatbo" target="_blank">
+                                    <img src="https://i.imgur.com/GtoTgdG.png" alt="LinkedIn" class="social-icon">
+                                </a>
+                                <a href="https://agenciatbo.com.br/" target="_blank">
+                                    <img src="https://i.imgur.com/5rWrizo.png" alt="Website" class="social-icon">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="code-output" id="codigo-html"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para formatar o telefone no padrão +XX XX X XXXX-XXXX
+        function formatarTelefone(telefone) {
+            // Remove todos os caracteres não numéricos
+            const numeros = telefone.replace(/\D/g, '');
+            
+            // Se não tem números suficientes, retorna o valor original
+            if (numeros.length < 10) {
+                return telefone;
+            }
+            
+            // Formata no padrão +XX XX X XXXX-XXXX
+            if (numeros.length === 11) {
+                // Celular brasileiro: +55 XX 9 XXXX-XXXX
+                return `+55 ${numeros.substring(0, 2)} ${numeros.substring(2, 3)} ${numeros.substring(3, 7)}-${numeros.substring(7, 11)}`;
+            } else if (numeros.length === 10) {
+                // Telefone fixo brasileiro: +55 XX XXXX-XXXX
+                return `+55 ${numeros.substring(0, 2)} ${numeros.substring(2, 6)}-${numeros.substring(6, 10)}`;
+            } else if (numeros.length === 13 && numeros.startsWith('55')) {
+                // Já tem código do país: +55 XX X XXXX-XXXX
+                return `+${numeros.substring(0, 2)} ${numeros.substring(2, 4)} ${numeros.substring(4, 5)} ${numeros.substring(5, 9)}-${numeros.substring(9, 13)}`;
+            } else if (numeros.length === 12 && numeros.startsWith('55')) {
+                // Já tem código do país (fixo): +55 XX XXXX-XXXX
+                return `+${numeros.substring(0, 2)} ${numeros.substring(2, 4)} ${numeros.substring(4, 8)}-${numeros.substring(8, 12)}`;
+            }
+            
+            // Se não se encaixa nos padrões, tenta formatar como celular
+            if (numeros.length >= 11) {
+                return `+55 ${numeros.substring(0, 2)} ${numeros.substring(2, 3)} ${numeros.substring(3, 7)}-${numeros.substring(7, 11)}`;
+            }
+            
+            return telefone;
+        }
+
+        // Função para formatar o email automaticamente
+        function formatarEmail(email) {
+            // Se o email não contém @ e não está vazio, adiciona o domínio
+            if (email && !email.includes('@')) {
+                return email + '@agenciatbo.com.br';
+            }
+            return email;
+        }
+
+        function atualizarAssinatura() {
+            const nome = document.getElementById('nome').value || 'Nome e Sobrenome';
+            const cargo = document.getElementById('cargo').value || 'Cargo';
+            let telefone = document.getElementById('telefone').value || '+55 41 9 9999-9999';
+            const email = document.getElementById('email').value || 'seuemail@agenciatbo.com.br';
+            
+            // Formatar o telefone
+            telefone = formatarTelefone(telefone);
+            
+            // Atualizar o campo de telefone com a formatação
+            document.getElementById('telefone').value = telefone;
+            
+            // Atualizar preview
+            document.getElementById('preview-nome').textContent = nome;
+            document.getElementById('preview-cargo').textContent = cargo;
+            document.getElementById('preview-telefone').textContent = telefone;
+            document.getElementById('preview-email').textContent = email;
+                                
+            // Gerar código HTML ultra-compatível para Gmail usando apenas tabelas
+            const codigoHTML = `<table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4; max-width: 500px; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+    <tbody>
+        <tr>
+            <td style="vertical-align: middle; padding-right: 15px; width: 160px; mso-line-height-rule: exactly;">
+                <img src="https://i.imgur.com/5Ny8i5w.gif" alt="TBO - think, build, own" style="max-width: 160px; height: auto; display: block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;">
+            </td>
+            <td style="vertical-align: middle; width: 3px; padding: 0 10px; mso-line-height-rule: exactly;">
+                <table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 3px; height: 80px; background-color: #e85102; font-size: 1px; line-height: 1px; mso-line-height-rule: exactly;">&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td style="vertical-align: middle; padding-left: 15px; mso-line-height-rule: exactly;">
+                <table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                    <tbody>
+                        <tr>
+                            <td style="font-size: 28px; font-weight: bold; color: #333333; padding: 0 0 5px 0; line-height: 1.2; mso-line-height-rule: exactly;">
+                                ${nome}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; color: #e85102; padding: 0 0 15px 0; mso-line-height-rule: exactly;">
+                                ${cargo}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-bottom: 15px;">
+                                <table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <tbody>
+                                        <tr>
+                                            <td style="vertical-align: middle; padding-right: 8px; padding-bottom: 5px;">
+                                                <img src="https://i.imgur.com/w3dO2mR.png" alt="Telefone" style="width: 18px; height: 18px; display: block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;">
+                                            </td>
+                                            <td style="vertical-align: middle; padding-bottom: 5px;">
+                                                <a href="tel:${telefone.replace(/\s/g, '')}" style="color: #333333; text-decoration: none; font-size: 14px;">${telefone}</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="vertical-align: middle; padding-right: 8px;">
+                                                <img src="https://i.imgur.com/Xe018u5.png" alt="E-mail" style="width: 18px; height: 18px; display: block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;">
+                                            </td>
+                                            <td style="vertical-align: middle;">
+                                                <a href="mailto:${email}" style="color: #333333; text-decoration: none; font-size: 14px;">${email}</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <tbody>
+                                        <tr>
+                                            <td style="padding-right: 6px;">
+                                                <a href="https://www.instagram.com/agenciatbo/?hl=pt" target="_blank" style="text-decoration: none;">
+                                                    <img src="https://i.imgur.com/eMiJ4v8.png" alt="Instagram" style="width: 16px; height: 16px; display: block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;">
+                                                </a>
+                                            </td>
+                                            <td style="padding-right: 6px;">
+                                                <a href="https://br.linkedin.com/company/agenciatbo" target="_blank" style="text-decoration: none;">
+                                                    <img src="https://i.imgur.com/GtoTgdG.png" alt="LinkedIn" style="width: 16px; height: 16px; display: block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;">
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="https://agenciatbo.com.br/" target="_blank" style="text-decoration: none;">
+                                                    <img src="https://i.imgur.com/5rWrizo.png" alt="Website" style="width: 16px; height: 16px; display: block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;">
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>`;
+            
+            document.getElementById('codigo-html').textContent = codigoHTML;
+        }
+        
+        function copiarAssinatura() {
+            // Obter o código HTML gerado
+            const codigoHTML = document.getElementById('codigo-html').textContent;
+            
+            if (!codigoHTML.trim()) {
+                alert('Erro: Assinatura não foi gerada corretamente.');
+                return;
+            }
+            
+            // Função para copiar como HTML e texto
+            async function copiarConteudo() {
+                try {
+                    // Tenta usar a API moderna do Clipboard com suporte a HTML
+                    if (navigator.clipboard && window.ClipboardItem) {
+                        const clipboardItem = new ClipboardItem({
+                            'text/html': new Blob([codigoHTML], { type: 'text/html' }),
+                            'text/plain': new Blob([document.getElementById('preview').innerText], { type: 'text/plain' })
+                        });
+                        
+                        await navigator.clipboard.write([clipboardItem]);
+                        mostrarSucesso();
+                        return true;
+                    }
+                } catch (err) {
+                    console.log('Clipboard API falhou, tentando método alternativo:', err);
+                }
+                
+                // Fallback: criar elemento temporário com HTML
+                try {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = codigoHTML;
+                    tempDiv.style.position = 'absolute';
+                    tempDiv.style.left = '-9999px';
+                    document.body.appendChild(tempDiv);
+                    
+                    const range = document.createRange();
+                    range.selectNodeContents(tempDiv);
+                    
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    
+                    const success = document.execCommand('copy');
+                    selection.removeAllRanges();
+                    document.body.removeChild(tempDiv);
+                    
+                    if (success) {
+                        mostrarSucesso();
+                        return true;
+                    }
+                } catch (err) {
+                    console.log('execCommand falhou:', err);
+                }
+                
+                // Último recurso: copiar apenas texto
+                try {
+                    if (navigator.clipboard) {
+                        await navigator.clipboard.writeText(document.getElementById('preview').innerText);
+                        alert('Assinatura copiada como texto. Para manter a formatação, tente selecionar manualmente o conteúdo da pré-visualização e copiar com Ctrl+C.');
+                        return true;
+                    }
+                } catch (err) {
+                    console.log('Fallback de texto falhou:', err);
+                }
+                
+                return false;
+            }
+            
+            function mostrarSucesso() {
+                const btn = document.querySelector('.copy-btn');
+                const textoOriginal = btn.textContent;
+                btn.textContent = 'Assinatura copiada!';
+                btn.style.background = '#28a745';
+                
+                setTimeout(function() {
+                    btn.textContent = textoOriginal;
+                    btn.style.background = '#161616';
+                }, 2000);
+            }
+            
+            // Executa a função de cópia
+            copiarConteudo().then(success => {
+                if (!success) {
+                    alert('Erro ao copiar automaticamente. Por favor, selecione manualmente o conteúdo da pré-visualização e copie com Ctrl+C.');
+                }
+            });
+        }
+        
+        // Formatação automática do telefone enquanto digita
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            const telefoneFormatado = formatarTelefone(e.target.value);
+            if (telefoneFormatado !== e.target.value) {
+                e.target.value = telefoneFormatado;
+            }
+            atualizarAssinatura();
+        });
+        
+        // Formatação automática do email enquanto digita
+        document.getElementById('email').addEventListener('blur', function(e) {
+            const emailFormatado = formatarEmail(e.target.value);
+            if (emailFormatado !== e.target.value) {
+                e.target.value = emailFormatado;
+            }
+            atualizarAssinatura();
+        });
+        
+        // Atualizar preview em tempo real
+        document.getElementById('nome').addEventListener('input', atualizarAssinatura);
+        document.getElementById('cargo').addEventListener('input', atualizarAssinatura);
+        document.getElementById('email').addEventListener('input', atualizarAssinatura);
+        
+        // Gerar assinatura inicial
+        atualizarAssinatura();
+    </script>
+</body>
+</html>
+
